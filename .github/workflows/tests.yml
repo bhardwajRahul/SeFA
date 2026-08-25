@@ -29,7 +29,7 @@ jobs:
           python -m pip install -e ".[test]"
 
       - name: Run tests
-        run: python -m pytest tests -q
+        run: python -m pytest -q
 
   types:
     runs-on: ubuntu-latest
@@ -77,6 +77,4 @@ jobs:
 
       - name: Lint
         run: >
-          python -m pylint
-          aggregator models parser utils tests
-          run.py refresh_historic_data.py refresh_rbi_rates.py
+          python -m pylint src tests

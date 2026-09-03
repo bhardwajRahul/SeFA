@@ -3,7 +3,47 @@ Python module to generate Indian ITR schedule FA under section A3 automatically
 
 # How to run
 ## Setup
-The script requires Python 3.12 or higher. Please ensure that it is installed on your system. In newer versions of Python, you may encounter an [`externally-managed-environment`](https://peps.python.org/pep-0668/), so create and activate a [Python virtual environment](https://docs.python.org/3/library/venv.html#creating-virtual-environments) before installing the dependencies.
+The script requires Python 3.12 or higher. Please ensure that it is installed on your system.
+
+### With `install.sh` (macOS and Linux)
+[`install.sh`](install.sh) creates the virtual environment, installs SeFA and its dependencies
+(`pandas`, `openpyxl`, `yfinance`, `requests`) into it, and links the `sefa` command into a
+folder on your `PATH`, so a run never needs an environment to be activated:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/atulgpt/SeFA/main/install.sh | bash
+```
+
+Piped in like that the script has no checkout to install from, so it clones one into
+`~/.local/share/sefa/src` and installs that. Options go after `-s --`, as in
+`curl -fsSL <url> | bash -s -- --source ~/code/SeFA`.
+
+From a checkout of your own, run it directly instead:
+
+```sh
+git clone https://github.com/atulgpt/SeFA.git
+cd SeFA
+./install.sh
+```
+
+Either way, `sefa` is then a command like any other:
+
+```sh
+sefa --help
+```
+
+The environment is built at `.venv` inside the checkout and the link goes into
+`~/.local/bin`. `./install.sh --help` lists the options that move either of those, pick the
+interpreter to build with, or clone the checkout for you. When `~/.local/bin` is not on your
+`PATH`, the script offers to add it to your shell's startup file, and prints the line to add
+yourself when you decline or when there is no terminal to ask on, as in a piped run.
+
+SeFA is installed in editable mode, so the checkout **is** the installation. Leave it where it
+is, `git pull && ./install.sh` upgrades it, and `./install.sh --uninstall` removes the command
+and the environment again.
+
+### By hand
+On Windows, or to keep the environment under your own control. In newer versions of Python, you may encounter an [`externally-managed-environment`](https://peps.python.org/pep-0668/), so create and activate a [Python virtual environment](https://docs.python.org/3/library/venv.html#creating-virtual-environments) before installing the dependencies.
 
 ```sh
 # From the repository root
@@ -13,10 +53,10 @@ pip3 install .
 ```
 
 This installs all required dependencies (`pandas`, `openpyxl`, `yfinance`, `requests`) and the
-`sefa` command itself.
+`sefa` command itself, which stays on the `PATH` for as long as the environment is activated.
 
 ## Run the script
-With the virtual environment activated, run the script with a downloaded report:
+Run the script with a downloaded report:
 ```sh
 sefa -i "etrade_benefit_history:<absolute_folder_of_benefit_history_file>/BenefitHistory.xlsx" -ay 2023
 ```
@@ -82,8 +122,8 @@ If there is no network, the run logs a warning and falls back to the bundled dat
 `--skip-refresh` to force the bundled data (useful when offline). Either refresh can also be
 run on its own:
 ```sh
-python -m sefa.historic_data.shares.refresh_historic_data --help
-python -m sefa.historic_data.rates.rbi.refresh_rbi_rates --help
+.venv/bin/python -m sefa.historic_data.shares.refresh_historic_data --help
+.venv/bin/python -m sefa.historic_data.rates.rbi.refresh_rbi_rates --help
 ```
 
 ## Output
